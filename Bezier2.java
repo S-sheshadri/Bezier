@@ -39,16 +39,7 @@ public class Bezier2 extends PApplet {
 		else fill(255);
 			ellipse(m.getLocation().x,m.getLocation().y,5,5);
 		}
-	/*	for(Object o: multiple){
-		    Curve c=(Curve)o;
-		    List<SimplePointMarker> pointsc=(List<SimplePointMarker>)c.points;
-		{for(SimplePointMarker m:pointsc)
-		{if(m==pointsc.get(pointsc.size()-1)||m==pointsc.get(0))
-			fill(255,0,0);
-		else fill(255);
-			ellipse(m.getLocation().x,m.getLocation().y,5,5);
-		}}}
-		*///to see selected
+	//to see selected
 		if(select!=null)
 		{fill(0,0,255);
 			ellipse(select.getLocation().x,select.getLocation().y,5,5);}
@@ -122,12 +113,33 @@ public class Bezier2 extends PApplet {
 			  
 			bezierdone=true;
 			//newcurve=false;
+			select=null;
 			equ();
 			bezier();
-			System.out.println("EQUATION OF CURVE: "+multiple.size()+" "+"X:"+ex+"\nY: "+ey+"\n");
+			//System.out.println("EQUATION OF CURVE: "+multiple.size()+" "+"X:"+ex+"\nY: "+ey+"\n");
 }
-			
-		
+		if(key=='p')
+		{
+for(int i=0;i<multiple.size();i++)
+				
+			{
+				
+				System.out.println("Curve "+(i+1));
+				Curve c=(Curve)multiple.get(i);
+			for(SimplePointMarker m:c.points)
+			{
+				System.out.println(m.getLocation());
+			}}
+		}
+			if(key=='e')
+			{for(int i=0;i<multiple.size();i++)
+				
+			{
+				
+				System.out.println("Curve "+(i+1));
+				Curve c=(Curve)multiple.get(i);
+				System.out.println("X equation:"+c.ex+"\n Y equation:"+c.ey);
+			}}
 			
 		
 	}
@@ -201,9 +213,10 @@ class Curve
 	List<SimplePointMarker> points;
 	String ex;
 	String ey;
-	Curve(LinkedList x,LinkedList y,List<SimplePointMarker> p)
+		Curve(LinkedList x,LinkedList y,List<SimplePointMarker> p)
 	{
 		points=new ArrayList(p);
 		xres=new LinkedList(x);
 		yres=new LinkedList(y)	;
 	}}
+	
