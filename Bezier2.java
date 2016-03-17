@@ -1,6 +1,7 @@
 package bezierPlot;
 
 import processing.core.*;
+import java.io.*;
 import java.util.*;
 import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
@@ -25,6 +26,7 @@ public class Bezier2 extends PApplet {
 	List<SimplePointMarker> points = new ArrayList();
 	LinkedList xres=new LinkedList();
 	LinkedList yres;
+	LinkedList multipleBezier=new LinkedList();
 	int lc=0;
 	LinkedList multiple=new LinkedList();
 	public void draw()
@@ -50,8 +52,9 @@ public class Bezier2 extends PApplet {
 	    LinkedList x=c.xres;
 	    LinkedList y=c.yres;
 		for(int i=0;i<x.size()-1;i++)
-	{stroke(1);
-	line((float)x.get(i),(float)y.get(i),(float)x.get(i+1),(float)y.get(i+1));
+	{stroke(5);
+	//line((float)x.get(i),(float)y.get(i),(float)x.get(i+1),(float)y.get(i+1));
+	ellipse((float)x.get(i),(float)y.get(i),1,1);
 	}}
 
 		}
@@ -59,7 +62,8 @@ public class Bezier2 extends PApplet {
 	public void setup()
 	{
 		background(255);
-		size(displayWidth/2,displayHeight/2);
+		size(displayWidth,displayHeight);
+		System.out.println(displayWidth+" "+displayHeight);
 		smooth(4);
 		}
 
@@ -110,12 +114,16 @@ public class Bezier2 extends PApplet {
 		if(key=='\n')
 			
 		{
-			  
+			 
 			bezierdone=true;
 			//newcurve=false;
 			select=null;
 			equ();
 			bezier();
+			LinkedList oneBezier=new LinkedList();
+			oneBezier.add(xres);
+			oneBezier.add(yres);
+			multipleBezier.add(oneBezier);
 			//System.out.println("EQUATION OF CURVE: "+multiple.size()+" "+"X:"+ex+"\nY: "+ey+"\n");
 }
 		if(key=='p')
@@ -132,14 +140,26 @@ for(int i=0;i<multiple.size();i++)
 			}}
 		}
 			if(key=='e')
-			{for(int i=0;i<multiple.size();i++)
+			{	PrintWriter writer;
+				try
+				{writer=new PrintWriter("/home/s-sheshadri/workspace/UCSDUnfoldingMaps/data/bezierPlot/myFirst.txt", "UTF-8");}
 				
-			{
-				
+				catch(IOException e)
+				{return;}
+			
+				for(int i=0;i<multiple.size();i++)
+			
+				{Curve c=(Curve)multiple.get(i);
 				System.out.println("Curve "+(i+1));
-				Curve c=(Curve)multiple.get(i);
 				System.out.println("X equation:"+c.ex+"\n Y equation:"+c.ey);
-			}}
+				
+				for(int j=0;j<c.points.size();j++)
+				{
+					writer.write(c.points.get(j).getLocation()+" ");
+				}	writer.write("\n");	
+				}
+				writer.close();
+			}
 			
 		
 	}
@@ -206,8 +226,7 @@ for(int i=0;i<multiple.size();i++)
 		return (fact(n)/(fact(n-r)*fact(r)));}
 	
 }
-class Curve
-{
+class Curve {
 	LinkedList xres;
 	LinkedList yres;
 	List<SimplePointMarker> points;
@@ -218,5 +237,12 @@ class Curve
 		points=new ArrayList(p);
 		xres=new LinkedList(x);
 		yres=new LinkedList(y)	;
-	}}
-	
+	}
+/*void drawCurve()
+{for(int i=0;i<xres.size()-1;i++)
+{stroke(5);
+//line((float)x.get(i),(float)y.get(i),(float)x.get(i+1),(float)y.get(i+1));
+System.out.println("DEAR GOD FORBIDDEN");
+ellipse((float)xres.get(i),(float)yres.get(i),1,1);
+}
+	}*/}
