@@ -1,6 +1,7 @@
 package bezierPlot;
 
 import processing.core.*;
+import java.io.*;
 import java.util.*;
 import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
@@ -25,14 +26,13 @@ public class Bezier2 extends PApplet {
 	List<SimplePointMarker> points = new ArrayList();
 	LinkedList xres=new LinkedList();
 	LinkedList yres;
+	LinkedList multipleBezier=new LinkedList();
 	int lc=0;
 	LinkedList multiple=new LinkedList();
 	public void draw()
 	{
 		//axes
 		stroke(0);
-		line(width/2,0,width/2,height);
-		line(0,height/2,width,height/2);
 		for(SimplePointMarker m:points)
 		{if(m==points.get(points.size()-1)||m==points.get(0))
 			fill(255,0,0);
@@ -43,25 +43,53 @@ public class Bezier2 extends PApplet {
 		if(select!=null)
 		{fill(0,0,255);
 			ellipse(select.getLocation().x,select.getLocation().y,5,5);}
-		//to plot the curve
-       for(Object o: multiple){
-	    Curve c=(Curve)o;
- 	 
-	    LinkedList x=c.xres;
-	    LinkedList y=c.yres;
-		for(int i=0;i<x.size()-1;i++)
-	{stroke(1);
-	line((float)x.get(i),(float)y.get(i),(float)x.get(i+1),(float)y.get(i+1));
-	}}
+		//grid
+				stroke(150,150,150);
+				float t=displayWidth/18;
+				for(float i=0;i<19;i++)
+				{
+					//axes in red
+					if(abs(i*t-displayWidth/2)<=20)
+					{
+						stroke(255,0,0);
+						line(i*t,0,i*t,displayHeight);
+						stroke(150);}
+					else
+					
+					line(i*t,0,i*t,displayHeight);
+					
+				}
+				t=displayHeight/16;
+				for(int i=0;i<=16;i++)
+				{
+					line(0,i*t,displayWidth,i*t);
+					
+				}
+				//x axes in red 
+				stroke(3);
+				stroke(255,0,0);
+				line(0,displayHeight/2,displayWidth,displayHeight/2);
+				//to plot the curve
+		       for(Object o: multiple){
+			    Curve c=(Curve)o;
+		 	 
+			    LinkedList x=c.xres;
+			    LinkedList y=c.yres;
+				for(int i=0;i<x.size()-1;i++)
+					{stroke(5);
+					//line((float)x.get(i),(float)y.get(i),(float)x.get(i+1),(float)y.get(i+1));
+					ellipse((float)x.get(i),(float)y.get(i),1,1);
+					}}
 
 		}
 	
 	public void setup()
 	{
 		background(255);
-		size(displayWidth/2,displayHeight/2);
-		smooth(4);
-		}
+		size(displayWidth,displayHeight);
+		System.out.println(displayWidth+" "+displayHeight);
+		
+	}
 
 	public void mouseClicked()
 	{
@@ -110,12 +138,16 @@ public class Bezier2 extends PApplet {
 		if(key=='\n')
 			
 		{
-			  
+			 
 			bezierdone=true;
 			//newcurve=false;
 			select=null;
 			equ();
 			bezier();
+			LinkedList oneBezier=new LinkedList();
+			oneBezier.add(xres);
+			oneBezier.add(yres);
+			multipleBezier.add(oneBezier);
 			//System.out.println("EQUATION OF CURVE: "+multiple.size()+" "+"X:"+ex+"\nY: "+ey+"\n");
 }
 		if(key=='p')
@@ -132,14 +164,26 @@ for(int i=0;i<multiple.size();i++)
 			}}
 		}
 			if(key=='e')
-			{for(int i=0;i<multiple.size();i++)
+			{	PrintWriter writer;
+				try
+				{writer=new PrintWriter("/home/s-sheshadri/workspace/UCSDUnfoldingMaps/data/bezierPlot/myFirst.txt", "UTF-8");}
 				
-			{
-				
+				catch(IOException e)
+				{return;}
+			
+				for(int i=0;i<multiple.size();i++)
+			
+				{Curve c=(Curve)multiple.get(i);
 				System.out.println("Curve "+(i+1));
-				Curve c=(Curve)multiple.get(i);
 				System.out.println("X equation:"+c.ex+"\n Y equation:"+c.ey);
-			}}
+				
+				for(int j=0;j<c.points.size();j++)
+				{
+					writer.write(c.points.get(j).getLocation()+"%");
+				}	writer.write("\n");	
+				}
+				writer.close();
+			}
 			
 		
 	}
@@ -206,8 +250,7 @@ for(int i=0;i<multiple.size();i++)
 		return (fact(n)/(fact(n-r)*fact(r)));}
 	
 }
-class Curve
-{
+class Curve {
 	LinkedList xres;
 	LinkedList yres;
 	List<SimplePointMarker> points;
@@ -218,5 +261,12 @@ class Curve
 		points=new ArrayList(p);
 		xres=new LinkedList(x);
 		yres=new LinkedList(y)	;
-	}}
-	
+	}
+/*void drawCurve()
+{for(int i=0;i<xres.size()-1;i++)
+{stroke(5);
+//line((float)x.get(i),(float)y.get(i),(float)x.get(i+1),(float)y.get(i+1));
+System.out.println("DEAR GOD FORBIDDEN");
+ellipse((float)xres.get(i),(float)yres.get(i),1,1);
+}
+	}*/}
